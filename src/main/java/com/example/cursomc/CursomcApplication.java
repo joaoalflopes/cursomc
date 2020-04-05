@@ -2,7 +2,6 @@ package com.example.cursomc;
 
 import java.util.Arrays;
 
-import org.apache.catalina.connector.ClientAbortException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
