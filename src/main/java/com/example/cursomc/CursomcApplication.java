@@ -2,6 +2,7 @@ package com.example.cursomc;
 
 import java.util.Arrays;
 
+import org.apache.catalina.connector.ClientAbortException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
@@ -9,10 +10,15 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 import com.example.cursomc.domain.Categoria;
 import com.example.cursomc.domain.Cidade;
+import com.example.cursomc.domain.Cliente;
+import com.example.cursomc.domain.Endereco;
 import com.example.cursomc.domain.Estado;
 import com.example.cursomc.domain.Produto;
+import com.example.cursomc.domain.enums.TipoCliente;
 import com.example.cursomc.repositories.CategoriaRepository;
 import com.example.cursomc.repositories.CidadeRepository;
+import com.example.cursomc.repositories.ClienteRepository;
+import com.example.cursomc.repositories.EnderecoRepository;
 import com.example.cursomc.repositories.EstadoRepository;
 import com.example.cursomc.repositories.ProdutoRepository;
 
@@ -27,6 +33,10 @@ public class CursomcApplication implements CommandLineRunner {
 	private EstadoRepository estadoRepository;
 	@Autowired
 	private CidadeRepository cidadeRepository;
+	@Autowired
+	private ClienteRepository clienteRepository;
+	@Autowired
+	private EnderecoRepository enderecoRepository;
 	
 	public static void main(String[] args) {
 		SpringApplication.run(CursomcApplication.class, args);
@@ -72,17 +82,38 @@ public class CursomcApplication implements CommandLineRunner {
 		Estado est3 = new Estado(null, "Rio de Janeiro", "RJ");
 		
 		Cidade c1 = new Cidade(null, "São Paulo", est1);
-		Cidade c2 = new Cidade(null, "Campinas", est1);
+		Cidade c2 = new Cidade(null, "São Vicente", est1);
 		Cidade c3 = new Cidade(null, "Belo Horizonte", est2);
 		Cidade c4 = new Cidade(null, "Rio de Janeiro", est3);
+		Cidade c5 = new Cidade(null, "Santos", est1);
 		
-		est1.getCidades().addAll(Arrays.asList(c1,c2));
+		est1.getCidades().addAll(Arrays.asList(c1,c2,c5));
 		est2.getCidades().addAll(Arrays.asList(c3));
 		est3.getCidades().addAll(Arrays.asList(c4));
 		
 		estadoRepository.saveAll(Arrays.asList(est1, est2, est3));
 		
-		cidadeRepository.saveAll(Arrays.asList(c1, c2, c3, c4));
+		cidadeRepository.saveAll(Arrays.asList(c1, c2, c3, c4, c5));
+		
+		Cliente cli1 = new Cliente(null, "Maria Helena P.Lopes", "mariahelen@gmail.com", "07210559488", TipoCliente.PESSOAFISICA);
+		Cliente cli2 = new Cliente(null, "Joao Alfredo P.Lopes", "joaoalfredo_lopes@yahoo.com.br", "08769488835", TipoCliente.PESSOAFISICA);
+		Cliente cli3 = new Cliente(null, "Simoes & Barrreira SC Ltda", "simoesbarra@gmail.com", "05755751000131", TipoCliente.PESSOAJURIDICA);
+		
+		cli1.getTelefones().addAll(Arrays.asList("13991138797", "1332281406"));
+		cli2.getTelefones().addAll(Arrays.asList("13991236336", "13981328480"));
+		cli3.getTelefones().addAll(Arrays.asList("1332281809", "1332281810"));
+		
+		Endereco end1 = new Endereco(null, "Rua Anadir Dias de Carvalho", "586", "Casa", "Joquei Clube", "11450-515", cli1, c2);
+		Endereco end2 = new Endereco(null, "Rua Governador Pedro de Toledo", "56", "Apto 95", "Boqueirao", "11045-550", cli2, c5);
+		Endereco end3 = new Endereco(null, "Rua Anadir Dias de Carvalho", "586", "-", "Joquei Clube", "11450-515", cli2, c2);
+		Endereco end4 = new Endereco(null, "Avenida Dona Ana Costa", "413", "Conj.45", "Gonzaga", "11230-101", cli3, c1);
+		
+		cli1.getEnderecos().addAll(Arrays.asList(end1));
+		cli2.getEnderecos().addAll(Arrays.asList(end2,end3));
+		cli3.getEnderecos().addAll(Arrays.asList(end4));
+		
+		clienteRepository.saveAll(Arrays.asList(cli1, cli2, cli3));
+		enderecoRepository.saveAll(Arrays.asList(end1, end2, end3, end4));
 		
 	}
 	
