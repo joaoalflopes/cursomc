@@ -1,5 +1,6 @@
 package com.example.cursomc;
 
+import java.text.SimpleDateFormat;
 import java.util.Arrays;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,13 +13,22 @@ import com.example.cursomc.domain.Cidade;
 import com.example.cursomc.domain.Cliente;
 import com.example.cursomc.domain.Endereco;
 import com.example.cursomc.domain.Estado;
+import com.example.cursomc.domain.ItemPedido;
+import com.example.cursomc.domain.Pagamento;
+import com.example.cursomc.domain.PagamentoComBoleto;
+import com.example.cursomc.domain.PagamentoComCartao;
+import com.example.cursomc.domain.Pedido;
 import com.example.cursomc.domain.Produto;
+import com.example.cursomc.domain.enums.EstadoPagamento;
 import com.example.cursomc.domain.enums.TipoCliente;
 import com.example.cursomc.repositories.CategoriaRepository;
 import com.example.cursomc.repositories.CidadeRepository;
 import com.example.cursomc.repositories.ClienteRepository;
 import com.example.cursomc.repositories.EnderecoRepository;
 import com.example.cursomc.repositories.EstadoRepository;
+import com.example.cursomc.repositories.ItemPedidoRepository;
+import com.example.cursomc.repositories.PagamentoRepository;
+import com.example.cursomc.repositories.PedidoRepository;
 import com.example.cursomc.repositories.ProdutoRepository;
 
 @SpringBootApplication
@@ -36,6 +46,12 @@ public class CursomcApplication implements CommandLineRunner {
 	private ClienteRepository clienteRepository;
 	@Autowired
 	private EnderecoRepository enderecoRepository;
+	@Autowired
+	private PedidoRepository pedidoRepository;
+	@Autowired
+	private PagamentoRepository pagamentoRepository;
+	@Autowired
+	private ItemPedidoRepository itemPedidoRepository;
 	
 	public static void main(String[] args) {
 		SpringApplication.run(CursomcApplication.class, args);
@@ -113,6 +129,48 @@ public class CursomcApplication implements CommandLineRunner {
 		
 		clienteRepository.saveAll(Arrays.asList(cli1, cli2, cli3));
 		enderecoRepository.saveAll(Arrays.asList(end1, end2, end3, end4));
+		
+		SimpleDateFormat sdf = new SimpleDateFormat("dd/mm/yyyy HH:mm");
+		
+		Pedido ped1 = new Pedido(null, sdf.parse("31/03/2020 11:40"), cli1, end1);
+		Pedido ped2 = new Pedido(null, sdf.parse("01/04/2020 22:35"), cli2, end2);
+		Pedido ped3 = new Pedido(null, sdf.parse("02/04/2020 13:15"), cli3, end4);
+		Pedido ped4 = new Pedido(null, sdf.parse("03/04/2020 09:23"), cli2, end3);
+		
+		Pagamento pagto1 = new PagamentoComCartao(null, EstadoPagamento.QUITADO, ped1, 4);
+		ped1.setPagamento(pagto1);
+		
+		Pagamento pagto2 = new PagamentoComBoleto(null, EstadoPagamento.PENDENTE, ped2, sdf.parse("06/04/2020 00:00"), null);
+		ped2.setPagamento(pagto2);
+		
+		Pagamento pagto3 = new PagamentoComBoleto(null, EstadoPagamento.PENDENTE, ped3, sdf.parse("06/04/2020 00:00"), null);
+		ped3.setPagamento(pagto3);
+		
+		Pagamento pagto4 = new PagamentoComCartao(null, EstadoPagamento.QUITADO, ped4, 6);
+		ped4.setPagamento(pagto4);
+		
+		cli1.getPedidos().addAll(Arrays.asList(ped1));
+		cli2.getPedidos().addAll(Arrays.asList(ped2,ped4));
+		cli3.getPedidos().addAll(Arrays.asList(ped3));
+		
+		pedidoRepository.saveAll(Arrays.asList(ped1, ped2, ped3, ped4));
+		pagamentoRepository.saveAll(Arrays.asList(pagto1, pagto2, pagto3, pagto4));
+		
+		ItemPedido iped1 = new ItemPedido(ped1, p1, 15.00, 1, 1200.00);
+		ItemPedido iped2 = new ItemPedido(ped1, p5, 0.00, 2, 395.00);
+		ItemPedido iped3 = new ItemPedido(ped3, p7, 0.00, 3, 3.50);
+		ItemPedido iped4 = new ItemPedido(ped3, p8, 0.30, 5, 6.75);
+		ItemPedido iped5 = new ItemPedido(ped3, p9, 0.00, 2, 9.00);
+		ItemPedido iped6 = new ItemPedido(ped2, p2, 0.00, 1, 1900.00);
+		ItemPedido iped7 = new ItemPedido(ped4, p4, 0.00, 1, 18.00);
+		ItemPedido iped8 = new ItemPedido(ped4, p8, 0.30, 6 , 6.75);
+		
+		ped1.getItens().addAll(Arrays.asList(iped1, iped2));
+		ped2.getItens().addAll(Arrays.asList(iped6));
+		ped3.getItens().addAll(Arrays.asList(iped3, iped4, iped5));
+		ped4.getItens().addAll(Arrays.asList(iped7, iped8));
+	
+		itemPedidoRepository.saveAll((Arrays.asList(iped1, iped2, iped3, iped4, iped5, iped6, iped7, iped8)));
 		
 	}
 	
