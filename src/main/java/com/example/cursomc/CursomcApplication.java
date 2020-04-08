@@ -130,7 +130,7 @@ public class CursomcApplication implements CommandLineRunner {
 		clienteRepository.saveAll(Arrays.asList(cli1, cli2, cli3));
 		enderecoRepository.saveAll(Arrays.asList(end1, end2, end3, end4));
 		
-		SimpleDateFormat sdf = new SimpleDateFormat("dd/mm/yyyy HH:mm");
+		SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy HH:mm");
 		
 		Pedido ped1 = new Pedido(null, sdf.parse("31/03/2020 11:40"), cli1, end1);
 		Pedido ped2 = new Pedido(null, sdf.parse("01/04/2020 22:35"), cli2, end2);
@@ -143,7 +143,7 @@ public class CursomcApplication implements CommandLineRunner {
 		Pagamento pagto2 = new PagamentoComBoleto(null, EstadoPagamento.PENDENTE, ped2, sdf.parse("06/04/2020 00:00"), null);
 		ped2.setPagamento(pagto2);
 		
-		Pagamento pagto3 = new PagamentoComBoleto(null, EstadoPagamento.PENDENTE, ped3, sdf.parse("06/04/2020 00:00"), null);
+		Pagamento pagto3 = new PagamentoComBoleto(null, EstadoPagamento.QUITADO, ped3, sdf.parse("06/04/2020 00:00"), sdf.parse("07/04/2020 00:00"));
 		ped3.setPagamento(pagto3);
 		
 		Pagamento pagto4 = new PagamentoComCartao(null, EstadoPagamento.QUITADO, ped4, 6);
